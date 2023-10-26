@@ -34,7 +34,7 @@ function LoginForm() {
         localStorage.setItem("user", JSON.stringify(response.data));
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("_id", response.data._id);
-        navigate("/");
+        navigate("/tasks");
       }
       toast(response.data);
       setIsLoading(false);

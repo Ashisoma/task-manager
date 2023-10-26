@@ -10,7 +10,7 @@ function TaskDetails() {
   const [editedStatus, setEditedStatus] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
 
-  const apiUrl = "https://tasks-api-yq7g.onrender.com"; // Replace with the actual API endpoint
+  const apiUrl = "https://tasks-api-yq7g.onrender.com"; 
   const history = useHistory();
 
   useEffect(() => {
@@ -25,7 +25,7 @@ function TaskDetails() {
 
     // Fetch the task details from the API using the taskId
     axios
-      .get(`${apiUrl}/api/v1/tasks/${taskId}`, { headers })
+      .get(`${apiUrl}/tasks/${taskId}`, { headers })
       .then((response) => {
         setTask(response.data);
         setEditedTitle(response.data.title);
@@ -44,7 +44,7 @@ function TaskDetails() {
   const handleSave = () => {
     // Send a PUT request to update the task with edited properties
     axios
-      .put(`${apiUrl}/api/v1/tasks/${taskId}`,{ headers }, {
+      .put(`${apiUrl}/tasks/${taskId}`,{ headers }, {
         title: editedTitle,
         status: editedStatus,
         description: editedDescription,
@@ -92,7 +92,7 @@ function TaskDetails() {
               <button onClick={handleEdit}>Edit</button>
             </div>
           )}
-          <Link to="/">Back to Task List</Link>
+          <Link to="/tasks">Back to Task List</Link>
         </div>
       ) : (
         <p>Loading task details...</p>

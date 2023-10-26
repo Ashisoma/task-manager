@@ -33,11 +33,11 @@ function TaskList() {
     // Include the JWT token in the request headers
     const headers = {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${jwtToken}`,
+      authorization: `Bearer ${jwtToken}`,
     };
 
     axios
-      .delete(`${apiUrl}/api/v1/tasks/${taskId}`, { headers })
+      .delete(`${apiUrl}/tasks/${taskId}`, { headers })
       .then(() => {
         // Remove the deleted task from the tasks state
         setTasks(tasks.filter(task => task.id !== taskId));

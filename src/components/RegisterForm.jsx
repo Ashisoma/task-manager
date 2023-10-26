@@ -1,11 +1,9 @@
-// src/components/RegisterForm.js
 import axios from "axios";
 import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
 
 function RegisterForm() {
-
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -19,7 +17,7 @@ function RegisterForm() {
       [name]: value,
     });
 
-    if (name === 'password2') {
+    if (name === "password2") {
       setPasswordMatch(formData.password === value);
     }
   };
@@ -27,7 +25,7 @@ function RegisterForm() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    const apiUrl = "https://tasks-api-yq7g.onrender.com/register"; // Replace with the actual registration API endpoint
+    const apiUrl = "https://tasks-api-yq7g.onrender.com/auth/register"; 
 
     try {
       const response = await axios.post(apiUrl, formData, {
@@ -40,6 +38,9 @@ function RegisterForm() {
       console.log("Registration successful! JWT token:", jwtToken);
       // Save the JWT token in localStorage or state for future use
       localStorage.setItem("jwtToken", jwtToken);
+      localStorage.setItem("user", JSON.stringify(response.data));
+      localStorage.setItem("_id", response.data._id);
+      navigate("/tasks");
     } catch (error) {
       console.error("Registration failed:", error);
       // Handle the registration error, possibly show an error message to the user
@@ -108,13 +109,13 @@ function RegisterForm() {
               </div>
             </div>
             <div className="flex items-center justify-end mt-4">
-              <Link></Link>
-              <a
+              <Link
                 className="text-sm text-gray-600 underline hover:text-gray-900"
-                href="#"
+                to="/tasks"
               >
                 Already registered?
-              </a>
+              </Link>
+
               <button
                 type="submit"
                 onClick={handleRegister}
