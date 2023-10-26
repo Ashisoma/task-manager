@@ -1,21 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useHistory } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useHistory } from "react-router-dom";
+import axios from "axios";
 
 function TaskDetails() {
   const { taskId } = useParams();
   const [task, setTask] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState('');
-  const [editedStatus, setEditedStatus] = useState('');
-  const [editedDescription, setEditedDescription] = useState('');
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedStatus, setEditedStatus] = useState("");
+  const [editedDescription, setEditedDescription] = useState("");
 
-  const apiUrl = 'https://tasks-api-yq7g.onrender.com'; // Replace with the actual API endpoint
+  const apiUrl = "https://tasks-api-yq7g.onrender.com"; // Replace with the actual API endpoint
   const history = useHistory();
 
   useEffect(() => {
+    // Fetch the JWT token from local storage
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    // Include the token in the request headers
+    const headers = {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${jwtToken}`,
+    };
+
     // Fetch the task details from the API using the taskId
-    axios.get(`${apiUrl}/${taskId}`)
+    axios
+      .get(`${apiUrl}/api/v1/tasks/${taskId}`, { headers })
       .then((response) => {
         setTask(response.data);
         setEditedTitle(response.data.title);
@@ -23,7 +33,7 @@ function TaskDetails() {
         setEditedDescription(response.data.description);
       })
       .catch((error) => {
-        console.error('Error fetching task details:', error);
+        console.error("Error fetching task details:", error);
       });
   }, [apiUrl, taskId]);
 
@@ -33,16 +43,17 @@ function TaskDetails() {
 
   const handleSave = () => {
     // Send a PUT request to update the task with edited properties
-    axios.put(`${apiUrl}/api//${taskId}`, {
-      title: editedTitle,
-      status: editedStatus,
-      description: editedDescription,
-    })
+    axios
+      .put(`${apiUrl}/api/v1/tasks/${taskId}`,{ headers }, {
+        title: editedTitle,
+        status: editedStatus,
+        description: editedDescription,
+      })
       .then(() => {
         setIsEditing(false);
       })
       .catch((error) => {
-        console.error('Error saving changes:', error);
+        console.error("Error saving changes:", error);
       });
   };
 
