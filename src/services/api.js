@@ -11,3 +11,13 @@ export const fetchTasks = async () => {
     throw error;
   }
 };
+
+export const fetchTaskById = async (id) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/v1/tasks/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

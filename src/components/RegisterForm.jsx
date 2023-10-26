@@ -1,129 +1,132 @@
 // src/components/RegisterForm.js
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import Loading from './Loading';
-import { Link } from 'react-router-dom';
+import axios from "axios";
+import React, { useState } from "react";
+
+import { Link } from "react-router-dom";
 
 function RegisterForm() {
-  const [isLoading, setIsLoading] = useState(true);
-  
-  const [data, setData] = useState({
+
+  const [formData, setFormData] = useState({
     username: "",
     password: "",
     password2: "",
   });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
 
-  const handleChange = (name) => (e) => {
-    let value;
- 
-   
-      value = e.target.value;
-    
-    setData({ ...data, [name]: value });
+    if (name === 'password2') {
+      setPasswordMatch(formData.password === value);
+    }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    if (data.password !== data.password2) {
-      setIsLoading(false);
-      toast.info("Passwords do not match");
-    } else if (data.password.length < 8) {
-      setIsLoading(false);
-      toast("Password must be at least 8 characters long");
-    } else {
-      let formData = new FormData();
-      formData.append("username", data.username.trim());
-      formData.append("password", data.password);
+    const apiUrl = "https://tasks-api-yq7g.onrender.com/register"; // Replace with the actual registration API endpoint
 
-      try {
-        const response = await axios.post('https://tasks-api-yq7g.onrender.com/auth/register', formData);
+    try {
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-        if (response.status === 201) {
-          setData({
-            username: "",
-            password: "",
-            password2: "",
-          });
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("_id", response.data._id);
-        } else {
-          setIsLoading(false);
-        }
-
-        toast(response.data);
-      } catch (error) {
-        console.log(error.message);
-        toast(`EISHHHH  ---  ${error}`);
-      }
+      const jwtToken = response.data;
+      console.log("Registration successful! JWT token:", jwtToken);
+      // Save the JWT token in localStorage or state for future use
+      localStorage.setItem("jwtToken", jwtToken);
+    } catch (error) {
+      console.error("Registration failed:", error);
+      // Handle the registration error, possibly show an error message to the user
     }
   };
 
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
-
   return (
-    <section className="signUp">
-      <div className="titleDiv">
-        <h2>Sign Up</h2>
-        <hr />
+    <div>
+      <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50">
+        <h1 className="text-4xl font-bold text-blue-600">Task App </h1>
+        <div>
+          <a href="/">
+            <h3 className="text-3xl font-bold text-blue-600">Sign Up</h3>
+          </a>
+        </div>
+        <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg">
+          <form onSubmit={handleRegister}>
+            <div>
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 undefined"
+              >
+                Username
+              </label>
+              <div className="flex flex-col items-start">
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="block w-full mt-2 p-3 border-black rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 undefined"
+              >
+                Password
+              </label>
+              <div className="flex flex-col items-start">
+                <input
+                  type="password"
+                  name="password"
+                  onChange={handleChange}
+                  value={formData.password}
+                  className="block w-full mt-1 p-3 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+              </div>
+            </div>
+            <div className="mt-4">
+              <label
+                htmlFor="password_confirmation"
+                className="block text-sm font-medium text-gray-700 undefined"
+              >
+                Confirm Password
+              </label>
+              <div className="flex flex-col items-start">
+                <input
+                  type="password"
+                  name="password2"
+                  className="block w-full mt-1 p-3 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-end mt-4">
+              <Link></Link>
+              <a
+                className="text-sm text-gray-600 underline hover:text-gray-900"
+                href="#"
+              >
+                Already registered?
+              </a>
+              <button
+                type="submit"
+                onClick={handleRegister}
+                className="inline-flex items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-900 border border-transparent rounded-md active:bg-gray-900 false"
+              >
+                Register
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-
-      <form>
-        <input
-          name="username"
-          type="text"
-          placeholder="Enter your username"
-          value={data.username}
-          onChange={handleChange("username")}
-          required
-        />
-
-    
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter your password"
-          value={data.password}
-          onChange={handleChange("password")}
-          required
-        />
-
-        <input
-          type="password"
-          name="password2"
-          placeholder="Confirm your password"
-          value={data.password2}
-          onChange={handleChange("password2")}
-          required
-        />
-
-       
-      
-
-        <button onClick={handleRegister}>
-          SUBMIT 
-        </button>
-      </form>
-
-      <p id="toLogin">
-        Have you taken signed up already?
-        <Link to="/login"> Log in</Link>
-      </p>
-    </section>
+    </div>
   );
 }
 

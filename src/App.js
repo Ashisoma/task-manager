@@ -12,10 +12,9 @@ function App() {
     <Router>
       <Routes>
         <Route path='/' element={<RegisterForm />} />
-        {/* <Route path='/circle' element={<Circle />} /> */}
+        <Route path='/tasks' element={<TaskList />} />
         <Route path='/login' element={<LoginForm />} />
-        {/* <Route path='/profile' element={<Profile />} /> */}
-        {/* <Route path='/edit' element={<Edit />} /> */}
+       
       </Routes>
     </Router>
     <ToastContainer />
