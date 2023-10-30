@@ -3,8 +3,9 @@ import { useParams, Link, useHistory, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function TaskDetails() {
-  const navigate = useNavigate();
   const { taskId } = useParams();
+  const navigate = useNavigate();
+
   const [task, setTask] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState("");
@@ -72,6 +73,13 @@ function TaskDetails() {
       )
       .then(() => {
         setIsEditing(false);
+        // Update the task state with the edited properties
+        setTask((prevTask) => ({
+          ...prevTask,
+          title: editedTitle,
+          status: editedStatus,
+          description: editedDescription,
+        }));
       })
       .catch((error) => {
         console.error("Error saving changes:", error);
@@ -91,7 +99,7 @@ function TaskDetails() {
       .delete(`${apiUrl}/tasks/${taskId}`, { headers })
       .then(() => {
         // Handle successful deletion
-        navigate('/tasks')
+        navigate("/tasks");
       })
       .catch((error) => {
         console.error("Error deleting task:", error);
@@ -100,67 +108,79 @@ function TaskDetails() {
 
   return (
     <div className="container mx-auto mt-8 p-4 bg-white shadow-md rounded-lg">
-    {task ? (
-      <div>
-        <h1 className="text-3xl font-semibold mb-4">Task Details</h1>
-        {isEditing ? (
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
-            <input
-              type="text"
-              value={editedTitle}
-              onChange={(e) => setEditedTitle(e.target.value)}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <label className="block text-gray-700 text-sm font-bold mt-3 mb-2">Status:</label>
-            <input
-              type="text"
-              value={editedStatus}
-              onChange={(e) => setEditedStatus(e.target.value)}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <label className="block text-gray-700 text-sm font-bold mt-3 mb-2">Description:</label>
-            <textarea
-              value={editedDescription}
-              onChange={(e) => setEditedDescription(e.target.value)}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <button
-              onClick={handleSave}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Save
-            </button>
-          </div>
-        ) : (
-          <div>
-            <p className="mb-2">Task ID: {task._id}</p>
-            <p className="mb-2">Title: {task.title}</p>
-            <p className="mb-2">Status: {task.status ? "Completed" : "Incomplete"}</p>
-            <p className="mb-2">Description: {task.description}</p>
-            <p className="mb-2">Created at: {formatDate(task.createdAt)}</p>
-            <button
-              onClick={handleEdit}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
-            >
-              Edit
-            </button>
-            <button
-              onClick={handleDelete}
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Delete
-            </button>
-          </div>
-        )}
-        <Link to="/tasks" className="pt-5 mt-4 text-blue-500 hover:underline">
-          Back to Task List
-        </Link>
-      </div>
-    ) : (
-      <p>Loading task details...</p>
-    )}
-  </div>
+      {task ? (
+        <div>
+          <h1 className="text-3xl font-semibold mb-4">Task Details</h1>
+          {isEditing ? (
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Title:
+              </label>
+              <input
+                type="text"
+                value={editedTitle}
+                onChange={(e) => setEditedTitle(e.target.value)}
+                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              />
+
+              <div>
+                <p className="mb-2">
+                  Status: {editedStatus ? "Completed" : "Incomplete"}
+                </p>
+                <button
+                  onClick={() => setEditedStatus(!editedStatus)}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+                >
+                  Toggle Status
+                </button>
+              </div>
+
+              <label className="block text-gray-700 text-sm font-bold mt-3 mb-2">
+                Description:
+              </label>
+              <textarea
+                value={editedDescription}
+                onChange={(e) => setEditedDescription(e.target.value)}
+                className="w-full pt-3 mt-1 px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              />
+              <button
+                onClick={handleSave}
+                className="bg-blue-500 mt-5 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Save
+              </button>
+            </div>
+          ) : (
+            <div>
+              {/* <p className="mb-2">Task ID: {task._id}</p> */}
+              <p className="mb-2">Title: {task.title}</p>
+              <p className="mb-2">
+                Status: {task.status ? "Completed" : "Incomplete"}
+              </p>
+              <p className="mb-2">Description: {task.description}</p>
+              <p className="mb-2">Created at: {formatDate(task.createdAt)}</p>
+              <button
+                onClick={handleEdit}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={handleDelete}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Delete
+              </button>
+            </div>
+          )}
+          <Link to="/tasks" className="pt-5 mt-4 text-blue-500 hover:underline">
+            Back to Task List
+          </Link>
+        </div>
+      ) : (
+        <p>Loading task details...</p>
+      )}
+    </div>
   );
 }
 

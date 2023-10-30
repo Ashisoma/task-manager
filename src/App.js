@@ -9,6 +9,7 @@ import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './Protected';
 import Navbar from './components/Navbar';
 import { useState } from 'react';
+import NewTask from './components/NewTask';
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
     setIsAuthenticated(false);
+    Navigate('/');
   };
 
   return (
@@ -30,7 +32,8 @@ function App() {
             <Route path="/register" element={<RegisterForm setIsAuthenticated={setIsAuthenticated} />} />
             <Route path="/" element={<TaskList />} />
             <Route path="/tasks" element={<TaskList />} />
-            <Route path="/tasks/:id" element={TaskDetails} />
+            <Route path="/tasks/add" element={<NewTask />} />
+            <Route path="/tasks/:taskId" element={<TaskDetails/>} />
           </Routes>
         </div>
       </Router>

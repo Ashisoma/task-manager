@@ -49,17 +49,21 @@ function TaskList() {
   };
 
   return (
-    <div className="bg-gray-200 min-h-screen flex items-center justify-center">
+    <div className="bg-white-200 min-h-screen">
       <div className="container mx-auto mt-8">
-        <h1 className="text-3xl font-semibold mb-4">Task List</h1>
-
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl font-semibold">Task List</h1>
+          <Link to="/tasks/add" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Add New Task
+          </Link>
+        </div>
         {loading ? (
           <p>Loading tasks...</p>
         ) : (
           <div className="grid grid-cols-2 gap-4">
             {tasks.map((task) => (
               <div key={task._id} className="py-2">
-                <Link to={`/task/${task._id}`}>
+                <Link to={`/tasks/${task._id}`}>
                   <div className="p-4 border rounded-lg shadow-md hover:shadow-lg">
                     <h2 className="font-bold">{task.title}</h2>
                     <div>
@@ -78,29 +82,7 @@ function TaskList() {
           </div>
         )}
 
-        {/* {loading ? (
-          <p>Loading tasks...</p>
-        ) : (
-          <ul>
-            {tasks.map((task) => (
-              <li key={task._id} className="py-2">
-                <Link to={`/task/${task._id}`}>
-                  <div className="p-4 border rounded-lg shadow-md hover:shadow-lg">
-                    <p className="font-bold">{task.title}</p>
-                    <p><strong>Status:</strong> {task.status}</p>
-                    <p><strong>Description:</strong> {task.description}</p>
-                  </div>
-                </Link>
-                <button
-                  className="mt-2 bg-red-500 text-white p-2 rounded hover:bg-red-600"
-                  onClick={() => handleDeleteTask(task._id)}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        )} */}
+    
       </div>
     </div>
   );
