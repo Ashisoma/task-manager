@@ -36,6 +36,7 @@ function TaskDetails() {
         } else if (response.status === 401) {
           console.log(response);
           // Handle unauthorized access (e.g., redirect to login)
+          navigate('/login')
         } else {
           console.log(response);
           // Handle other errors as needed
