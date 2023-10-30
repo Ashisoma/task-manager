@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useHistory } from "react-router-dom";
+import { useParams, Link, useHistory, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function TaskDetails() {
+  const navigate = useNavigate();
   const { taskId } = useParams();
   const [task, setTask] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState("");
-  const [editedStatus, setEditedStatus] = useState("");
+  const [editedStatus, setEditedStatus] = useState(false);
   const [editedDescription, setEditedDescription] = useState("");
 
   const apiUrl = "https://tasks-api-yq7g.onrender.com";
@@ -16,16 +17,12 @@ function TaskDetails() {
     const fetchTaskDetails = async () => {
       try {
         // Fetch the JWT token from local storage
-        const jwtToken = localStorage.getItem('jwtToken');
-
-        console.log('===details========');
-        console.log(jwtToken);
-        console.log(taskId);
+        const jwtToken = localStorage.getItem("jwtToken");
 
         // Fetch the task details from the API using the taskId
         const response = await axios.get(`${apiUrl}/tasks/${taskId}`, {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `${jwtToken}`,
           },
         });
@@ -43,8 +40,7 @@ function TaskDetails() {
           // Handle other errors as needed
         }
       } catch (error) {
-        console.error('Error fetching task details:', error.message);
-        // Handle network errors or other exceptions
+        console.error("Error fetching task details:", error.message);
       }
     };
 
@@ -54,51 +50,25 @@ function TaskDetails() {
   const handleEdit = () => {
     setIsEditing(true);
   };
-  // localStorage.removeItem('jwtToken');
-  // const fetchTaskDetails = async (apiUrl, taskId, jwtToken, setTask, setEditedTitle, setEditedStatus, setEditedDescription) => {
-  //   try {
-  //     const response = await axios.get(`${apiUrl}/tasks/${taskId}`, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': `Bearer ${jwtToken}`,
-  //       },
-  //     });
-
-  //     // Handle the response data
-  //     setTask(response.data);
-  //     setEditedTitle(response.data.title);
-  //     setEditedStatus(response.data.status);
-  //     setEditedDescription(response.data.description);
-  //   } catch (error) {
-  //     console.error('Error fetching task details:', error.message);
-  //   }
-  // };
-
-  // Call the function when needed, e.g., within a component or wherever you have access to apiUrl, taskId, and the state setters.
-  const jwtToken = localStorage.getItem("jwtToken");
-  console.log("===details========");
-  console.log(jwtToken);
-  console.log(taskId);
-
-  // fetchTaskDetails(apiUrl, taskId, jwtToken, setTask, setEditedTitle, setEditedStatus, setEditedDescription);
 
   const handleSave = () => {
     const jwtToken = localStorage.getItem("jwtToken");
 
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${jwtToken}`,
+      Authorization: `${jwtToken}`,
     };
+
     // Send a PUT request to update the task with edited properties
     axios
       .put(
         `${apiUrl}/tasks/${taskId}`,
-        { headers },
         {
           title: editedTitle,
           status: editedStatus,
           description: editedDescription,
-        }
+        },
+        { headers }
       )
       .then(() => {
         setIsEditing(false);
@@ -108,48 +78,95 @@ function TaskDetails() {
       });
   };
 
+  const handleDelete = () => {
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `${jwtToken}`,
+    };
+
+    // Send a DELETE request to delete the task
+    axios
+      .delete(`${apiUrl}/tasks/${taskId}`, { headers })
+      .then(() => {
+        // Handle successful deletion
+        navigate('/tasks')
+      })
+      .catch((error) => {
+        console.error("Error deleting task:", error);
+      });
+  };
+
   return (
-    <div className="container mx-auto mt-8">
-      {task ? (
-        <div>
-          <h1 className="text-3xl font-semibold mb-4">Task Details</h1>
-          {isEditing ? (
-            <div>
-              <label>Title:</label>
-              <input
-                type="text"
-                value={editedTitle}
-                onChange={(e) => setEditedTitle(e.target.value)}
-              />
-              <label>Status:</label>
-              <input
-                type="text"
-                value={editedStatus}
-                onChange={(e) => setEditedStatus(e.target.value)}
-              />
-              <label>Description:</label>
-              <textarea
-                value={editedDescription}
-                onChange={(e) => setEditedDescription(e.target.value)}
-              />
-              <button onClick={handleSave}>Save</button>
-            </div>
-          ) : (
-            <div>
-              <p>Task ID: {task._id}</p>
-              <p>Title: {task.title}</p>
-              <p>Status: {task.status}</p>
-              <p>Description: {task.description}</p>
-              <button onClick={handleEdit}>Edit</button>
-            </div>
-          )}
-          <Link to="/tasks">Back to Task List</Link>
-        </div>
-      ) : (
-        <p>Loading task details...</p>
-      )}
-    </div>
+    <div className="container mx-auto mt-8 p-4 bg-white shadow-md rounded-lg">
+    {task ? (
+      <div>
+        <h1 className="text-3xl font-semibold mb-4">Task Details</h1>
+        {isEditing ? (
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+            <input
+              type="text"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <label className="block text-gray-700 text-sm font-bold mt-3 mb-2">Status:</label>
+            <input
+              type="text"
+              value={editedStatus}
+              onChange={(e) => setEditedStatus(e.target.value)}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <label className="block text-gray-700 text-sm font-bold mt-3 mb-2">Description:</label>
+            <textarea
+              value={editedDescription}
+              onChange={(e) => setEditedDescription(e.target.value)}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <button
+              onClick={handleSave}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Save
+            </button>
+          </div>
+        ) : (
+          <div>
+            <p className="mb-2">Task ID: {task._id}</p>
+            <p className="mb-2">Title: {task.title}</p>
+            <p className="mb-2">Status: {task.status ? "Completed" : "Incomplete"}</p>
+            <p className="mb-2">Description: {task.description}</p>
+            <p className="mb-2">Created at: {formatDate(task.createdAt)}</p>
+            <button
+              onClick={handleEdit}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+            >
+              Edit
+            </button>
+            <button
+              onClick={handleDelete}
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Delete
+            </button>
+          </div>
+        )}
+        <Link to="/tasks" className="pt-5 mt-4 text-blue-500 hover:underline">
+          Back to Task List
+        </Link>
+      </div>
+    ) : (
+      <p>Loading task details...</p>
+    )}
+  </div>
   );
+}
+
+function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
 export default TaskDetails;
