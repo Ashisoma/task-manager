@@ -13,46 +13,81 @@ function TaskDetails() {
   const apiUrl = "https://tasks-api-yq7g.onrender.com";
 
   useEffect(() => {
-    // Fetch the JWT token from local storage
-    const jwtToken = localStorage.getItem("jwtToken");
+    const fetchTaskDetails = async () => {
+      try {
+        // Fetch the JWT token from local storage
+        const jwtToken = localStorage.getItem('jwtToken');
 
-    // Include the token in the request headers
+        console.log('===details========');
+        console.log(jwtToken);
+        console.log(taskId);
 
-    const headers = {
-      "Content-Type": "application/json",
-      authorization: `Bearer ${jwtToken}`,
+        // Fetch the task details from the API using the taskId
+        const response = await axios.get(`${apiUrl}/tasks/${taskId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${jwtToken}`,
+          },
+        });
+
+        if (response.status === 200) {
+          setTask(response.data);
+          setEditedTitle(response.data.title);
+          setEditedStatus(response.data.status);
+          setEditedDescription(response.data.description);
+        } else if (response.status === 401) {
+          console.log(response);
+          // Handle unauthorized access (e.g., redirect to login)
+        } else {
+          console.log(response);
+          // Handle other errors as needed
+        }
+      } catch (error) {
+        console.error('Error fetching task details:', error.message);
+        // Handle network errors or other exceptions
+      }
     };
 
-    console.log("===details========")
-    console.log(jwtToken)
-    // Fetch the task details from the API using the taskId
-    axios
-      .get(`${apiUrl}/tasks/${taskId}`, 
-      { headers }
-      )
-      .then((response) => {
-        console.log("============================response===============");
-        console.log(response);
-        setTask(response.data);
-        setEditedTitle(response.data.title);
-        setEditedStatus(response.data.status);
-        setEditedDescription(response.data.description);
-      })
-      .catch((error) => {
-        console.error("Error fetching task details:", error.message);
-      });
+    fetchTaskDetails();
   }, [apiUrl, taskId]);
 
   const handleEdit = () => {
     setIsEditing(true);
   };
+  // localStorage.removeItem('jwtToken');
+  // const fetchTaskDetails = async (apiUrl, taskId, jwtToken, setTask, setEditedTitle, setEditedStatus, setEditedDescription) => {
+  //   try {
+  //     const response = await axios.get(`${apiUrl}/tasks/${taskId}`, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${jwtToken}`,
+  //       },
+  //     });
+
+  //     // Handle the response data
+  //     setTask(response.data);
+  //     setEditedTitle(response.data.title);
+  //     setEditedStatus(response.data.status);
+  //     setEditedDescription(response.data.description);
+  //   } catch (error) {
+  //     console.error('Error fetching task details:', error.message);
+  //   }
+  // };
+
+  // Call the function when needed, e.g., within a component or wherever you have access to apiUrl, taskId, and the state setters.
+  const jwtToken = localStorage.getItem("jwtToken");
+  console.log("===details========");
+  console.log(jwtToken);
+  console.log(taskId);
+
+  // fetchTaskDetails(apiUrl, taskId, jwtToken, setTask, setEditedTitle, setEditedStatus, setEditedDescription);
 
   const handleSave = () => {
     const jwtToken = localStorage.getItem("jwtToken");
 
     const headers = {
       "Content-Type": "application/json",
-      authorization: `Bearer ${jwtToken}`,
+      Authorization: `Bearer ${jwtToken}`,
     };
     // Send a PUT request to update the task with edited properties
     axios

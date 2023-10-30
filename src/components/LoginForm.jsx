@@ -22,21 +22,23 @@ function LoginForm() {
     e.preventDefault();
 
     console.log("Login");
+    const apiUrl = "https://tasks-api-yq7g.onrender.com/auth/login";
 
     try {
-      const response = await axios.post(
-        "https://tasks-api-yq7g.onrender.com/auth/login",
-        formData
-      );
-      if (response.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response.data));
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("_id", response.data._id);
-        navigate("/tasks");
-      }
-      // console.log(response.data);
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const jwtToken = response.data.accessToken;
+      console.log("Login successful! JWT token:", jwtToken);
+      // Save the JWT token in localStorage or state for future use
+      localStorage.setItem("jwtToken", jwtToken);
+      navigate("/tasks");
     } catch (error) {
-      console.error(`EISHHHH  ---  ${error}`);
+      console.error("Login failed:", error);
+      // Handle the registration error, possibly show an error message to the user
     }
   };
 
