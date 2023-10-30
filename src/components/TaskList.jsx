@@ -57,8 +57,8 @@ function TaskList() {
         ) : (
           <ul>
             {tasks.map((task) => (
-              <li key={task.id} className="py-2">
-                <Link to={`/task/${task.id}`}>
+              <li key={task._id} className="py-2">
+                <Link to={`/task/${task._id}`}>
                   <div className="p-4 border rounded-lg shadow-md hover:shadow-lg">
                     <p className="font-bold">{task.title}</p>
                     <p><strong>Status:</strong> {task.status}</p>
@@ -67,7 +67,7 @@ function TaskList() {
                 </Link>
                 <button
                   className="mt-2 bg-red-500 text-white p-2 rounded hover:bg-red-600"
-                  onClick={() => handleDeleteTask(task.id)}
+                  onClick={() => handleDeleteTask(task._id)}
                 >
                   Delete
                 </button>

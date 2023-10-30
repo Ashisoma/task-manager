@@ -1,9 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function RegisterForm() {
+  const navigate = useNavigate();
+
+  const [passwordMatch, setPasswordMatch] = useState(true);
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -23,9 +27,10 @@ function RegisterForm() {
   };
 
   const handleRegister = async (e) => {
+    console.log('-=================-')
     e.preventDefault();
 
-    const apiUrl = "https://tasks-api-yq7g.onrender.com/auth/register"; 
+    const apiUrl = "https://tasks-api-yq7g.onrender.com/auth/register";
 
     try {
       const response = await axios.post(apiUrl, formData, {
@@ -34,7 +39,7 @@ function RegisterForm() {
         },
       });
 
-      const jwtToken = response.data;
+      const jwtToken = response.data.token;
       console.log("Registration successful! JWT token:", jwtToken);
       // Save the JWT token in localStorage or state for future use
       localStorage.setItem("jwtToken", jwtToken);
@@ -69,6 +74,8 @@ function RegisterForm() {
                 <input
                   type="text"
                   name="username"
+                  required
+
                   value={formData.username}
                   onChange={handleChange}
                   className="block w-full mt-2 p-3 border-black rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -87,6 +94,8 @@ function RegisterForm() {
                 <input
                   type="password"
                   name="password"
+                  required
+
                   onChange={handleChange}
                   value={formData.password}
                   className="block w-full mt-1 p-3 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -104,6 +113,7 @@ function RegisterForm() {
                 <input
                   type="password"
                   name="password2"
+                  required
                   className="block w-full mt-1 p-3 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
               </div>
@@ -111,7 +121,7 @@ function RegisterForm() {
             <div className="flex items-center justify-end mt-4">
               <Link
                 className="text-sm text-gray-600 underline hover:text-gray-900"
-                to="/tasks"
+                to="/login"
               >
                 Already registered?
               </Link>

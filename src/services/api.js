@@ -4,7 +4,7 @@ const API_BASE_URL = 'https://tasks-api-yq7g.onrender.com';
 
 export const fetchTasks = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/v1/tasks`);
+    const response = await axios.get(`${API_BASE_URL}/tasks`);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -14,7 +14,7 @@ export const fetchTasks = async () => {
 
 export const fetchTaskById = async (id) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/v1/tasks/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/tasks/${id}`);
     return response.data;
   } catch (error) {
     console.error(error);

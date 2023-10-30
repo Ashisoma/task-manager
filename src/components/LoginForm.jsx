@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import Loading from "./Loading";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Header from "./Header";
 
 function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
 
-  const { username, password } = formData;
 
-  const onChange = (e) => {
+  const handleChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -25,19 +21,20 @@ function LoginForm() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    console.log("Login");
+
     try {
       const response = await axios.post(
         "https://tasks-api-yq7g.onrender.com/auth/login",
         formData
       );
-      if (response.status === 201) {
+      if (response.status === 200) {
         localStorage.setItem("user", JSON.stringify(response.data));
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("_id", response.data._id);
         navigate("/tasks");
       }
-      toast(response.data);
-      setIsLoading(false);
+      // console.log(response.data);
     } catch (error) {
       console.error(`EISHHHH  ---  ${error}`);
     }
@@ -55,7 +52,7 @@ function LoginForm() {
         </a>
       </div>
       <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg">
-        <form onSubmit={handleRegister}>
+        <form onSubmit={handleLogin}>
           <div>
             <label
               htmlFor="username"
@@ -92,34 +89,22 @@ function LoginForm() {
             </div>
           </div>
           <div className="mt-4">
-            <label
-              htmlFor="password_confirmation"
-              className="block text-sm font-medium text-gray-700 undefined"
-            >
-              Confirm Password
-            </label>
-            <div className="flex flex-col items-start">
-              <input
-                type="password"
-                name="password2"
-                className="block w-full mt-1 p-3 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              />
-            </div>
+
+        
           </div>
           <div className="flex items-center justify-end mt-4">
-            <Link></Link>
-            <a
-              className="text-sm text-gray-600 underline hover:text-gray-900"
-              href="#"
-            >
-              Already registered?
-            </a>
+          <Link
+                className="text-sm text-gray-600 underline hover:text-gray-900"
+                to="/"
+              >
+                Not registered?
+              </Link>
             <button
               type="submit"
-              onClick={handleRegister}
+              onClick={handleLogin}
               className="inline-flex items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-900 border border-transparent rounded-md active:bg-gray-900 false"
             >
-              Register
+              Login
             </button>
           </div>
         </form>

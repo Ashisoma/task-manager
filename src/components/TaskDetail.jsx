@@ -10,30 +10,36 @@ function TaskDetails() {
   const [editedStatus, setEditedStatus] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
 
-  const apiUrl = "https://tasks-api-yq7g.onrender.com"; 
-  const history = useHistory();
+  const apiUrl = "https://tasks-api-yq7g.onrender.com";
 
   useEffect(() => {
     // Fetch the JWT token from local storage
     const jwtToken = localStorage.getItem("jwtToken");
 
     // Include the token in the request headers
+
     const headers = {
       "Content-Type": "application/json",
       authorization: `Bearer ${jwtToken}`,
     };
 
+    console.log("===details========")
+    console.log(jwtToken)
     // Fetch the task details from the API using the taskId
     axios
-      .get(`${apiUrl}/tasks/${taskId}`, { headers })
+      .get(`${apiUrl}/tasks/${taskId}`, 
+      { headers }
+      )
       .then((response) => {
+        console.log("============================response===============");
+        console.log(response);
         setTask(response.data);
         setEditedTitle(response.data.title);
         setEditedStatus(response.data.status);
         setEditedDescription(response.data.description);
       })
       .catch((error) => {
-        console.error("Error fetching task details:", error);
+        console.error("Error fetching task details:", error.message);
       });
   }, [apiUrl, taskId]);
 
@@ -42,13 +48,23 @@ function TaskDetails() {
   };
 
   const handleSave = () => {
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    const headers = {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${jwtToken}`,
+    };
     // Send a PUT request to update the task with edited properties
     axios
-      .put(`${apiUrl}/tasks/${taskId}`,{ headers }, {
-        title: editedTitle,
-        status: editedStatus,
-        description: editedDescription,
-      })
+      .put(
+        `${apiUrl}/tasks/${taskId}`,
+        { headers },
+        {
+          title: editedTitle,
+          status: editedStatus,
+          description: editedDescription,
+        }
+      )
       .then(() => {
         setIsEditing(false);
       })
@@ -85,7 +101,7 @@ function TaskDetails() {
             </div>
           ) : (
             <div>
-              <p>Task ID: {task.id}</p>
+              <p>Task ID: {task._id}</p>
               <p>Title: {task.title}</p>
               <p>Status: {task.status}</p>
               <p>Description: {task.description}</p>
