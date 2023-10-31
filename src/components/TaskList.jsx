@@ -12,10 +12,19 @@ function TaskList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchTasks();
+        const response = await fetchTasks();
+        console.log(response.status);
+        
 
-        setTasks(data);
-        console.log(data);
+        if (response.status == 200) {
+        setTasks(response.data);
+       
+
+          
+        }
+      
+
+        // console.log(response.data);
         setLoading(false);
       } catch (error) {
         // Handle error
@@ -47,8 +56,11 @@ function TaskList() {
         console.error("Error deleting task:", error.message);
       });
   };
+ 
 
   return (
+  
+  
     <div className="bg-white-200 min-h-screen">
       <div className="container mx-auto mt-8">
         <div className="flex justify-between items-center mb-4">
@@ -85,6 +97,7 @@ function TaskList() {
     
       </div>
     </div>
+    
   );
 }
 

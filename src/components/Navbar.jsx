@@ -1,8 +1,15 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
-const Navbar = ({ isAuthenticated, handleLogout }) => {
-  console.log(isAuthenticated)
+const Navbar = () => {
+  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const handleLogout = () => {
+    localStorage.removeItem("jwtToken");
+    navigate('/login')
+  };
+ 
+
   return (
     <nav className="bg-blue-500 p-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -10,7 +17,7 @@ const Navbar = ({ isAuthenticated, handleLogout }) => {
           Task Manager
         </Link>
         <ul className="flex space-x-4">
-          {isAuthenticated ? (
+          {localStorage.getItem('jwtToken') ? (
             <>
               <li>
                 <Link to="/tasks" className="text-white hover:underline">

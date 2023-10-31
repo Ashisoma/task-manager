@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function LoginForm({ setIsAuthenticated }) {
+function LoginForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -19,7 +19,6 @@ function LoginForm({ setIsAuthenticated }) {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log("Login");
     const apiUrl = "https://tasks-api-yq7g.onrender.com/auth/login";
 
     try {
@@ -33,21 +32,22 @@ function LoginForm({ setIsAuthenticated }) {
       console.log("Login successful! JWT token:", jwtToken);
       // Save the JWT token in localStorage or state for future use
       localStorage.setItem("jwtToken", jwtToken);
-      setIsAuthenticated(true);
-      navigate("/tasks");
+      if (jwtToken) {
+      
+        navigate("/tasks");
+      }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Login failed:", error.message);
       // Handle the registration error, possibly show an error message to the user
     }
   };
 
   return (
     <div>
-      <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50">
-        <h1 className="text-4xl font-bold text-blue-600">Task App </h1>
+      <div className="flex flex-col items-center min-h-screen pt-3 sm:justify-center sm:pt-0 bg-gray-50">
         <div>
           <a href="/">
-            <h3 className="text-3xl font-bold text-blue-600">Sign Up</h3>
+            <h3 className="text-3xl font-bold text-blue-600">Sign In</h3>
           </a>
         </div>
         <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg">

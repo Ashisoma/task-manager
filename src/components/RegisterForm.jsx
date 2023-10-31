@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 
-function RegisterForm({ setIsAuthenticated }) {
+function RegisterForm() {
   const navigate = useNavigate(); 
 
   const [passwordMatch, setPasswordMatch] = useState(true);
@@ -43,7 +43,6 @@ function RegisterForm({ setIsAuthenticated }) {
       console.log("Registration successful! JWT token:", jwtToken);
       // Save the JWT token in localStorage or state for future use
       localStorage.setItem("jwtToken", jwtToken);
-      setIsAuthenticated(true);
       localStorage.setItem("user", JSON.stringify(response.data));
       localStorage.setItem("_id", response.data._id);
       navigate("/tasks");
@@ -56,7 +55,6 @@ function RegisterForm({ setIsAuthenticated }) {
   return (
     <div>
       <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50">
-        <h1 className="text-4xl font-bold text-blue-600">Task App </h1>
         <div>
           <a href="/">
             <h3 className="text-3xl font-bold text-blue-600">Sign Up</h3>

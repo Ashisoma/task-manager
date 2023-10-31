@@ -13,27 +13,45 @@ import NewTask from './components/NewTask';
 
 function App() {
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Define a logout handler function
-  const handleLogout = () => {
-    localStorage.removeItem("jwtToken");
-    setIsAuthenticated(false);
-    Navigate('/');
-  };
+
+
+ 
 
   return (
     <>
       <Router>
         <div>
-          <Navbar isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
+          <Navbar  />
           <Routes>
-            <Route path="/login" element={<LoginForm setIsAuthenticated={setIsAuthenticated} />} />
-            <Route path="/register" element={<RegisterForm setIsAuthenticated={setIsAuthenticated} />} />
-            <Route path="/" element={<TaskList />} />
-            <Route path="/tasks" element={<TaskList />} />
-            <Route path="/tasks/add" element={<NewTask />} />
-            <Route path="/tasks/:taskId" element={<TaskDetails/>} />
+            <Route path="/login" element={<LoginForm  />}/>
+            <Route path="/register" element={<RegisterForm  />} />
+            <Route path="/" element={<LoginForm />} />
+
+            <Route path='/tasks'
+              element={
+              <ProtectedRoute>
+                  <TaskList />
+                </ProtectedRoute>
+              }
+            />
+            <Route path='/tasks/:taskId'
+              element={
+                <ProtectedRoute>
+                  <TaskDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route path='/tasks/add'
+              element={
+                <ProtectedRoute>
+                  <NewTask />
+                </ProtectedRoute>
+              }
+            />
+            {/* <Route path="/tasks/add" element={<NewTask />} isAuthenticated={isAuthenticated} /> */}
+            {/* <Route path="/tasks/:taskId" element={<TaskDetails/>} isAuthenticated={isAuthenticated}/> */}
           </Routes>
         </div>
       </Router>
